@@ -1,4 +1,3 @@
-#Initial commit
 import discord
 from discord.ext import commands
 import time
@@ -20,13 +19,15 @@ class MS2Bot(discord.Client):
     
     
     async def on_message(self,message):
-        print(f'{message.channel}  | {message.author} | {message.author.name} | {message.content}')
+        print(f'{message.channel}  | {message.author} | {message.author.id} | {message.author.name} | {message.content}')
         if message.content.startswith('!omak'):
             await message.channel.send('Omak 7elwa ya saif.')
+        if message.content.startswith('!whostheleader'):
+            await message.channel.send('Omak')
+
+        # if message.author.id == 171401091118923777:
+        #     await message.channel.send("Rishaal you stink")
 
     async def _started_bot(self,message):
         await channel.send("hi")
-
-    
-
 
