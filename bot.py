@@ -1,11 +1,11 @@
 import discord
-import time
+from time import gmtime, strftime
 import config#storing out token in here
 import json
+import asyncio
 from pathlib import Path
 
-jsonFileName = "boss-timer.json"
-jsonFilePath = Path(jsonFileName)
+jsonFilePath = Path(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
 
 
 class MS2Bot(discord.Client):
@@ -20,8 +20,8 @@ class MS2Bot(discord.Client):
     
     
     async def on_ready(self):
-        print("Wazzzzzaaaaaaaaaaaaaap")
-        print(f'we logged in as {self.user}')
+        print("Bot has been initialized.")        
+        # print(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
     
     async def on_message(self,message):        
 
@@ -47,10 +47,48 @@ class MS2Bot(discord.Client):
 
         targetChannel = self.get_channel(self.targetChannelID)        
         fileContent=""        
-        # with open(jsonFilePath) as file:
-        #     fileContent = json.load(file)
+        try:
+            with open(jsonFilePath) as file:
+                fileContent = json.load(file)
+        except Exception as e:
+            print(e)
+
         while not self.is_closed():
-            # for boss in fileContent:
-            await targetChannel.send("Hi")
-            #     print(boss)
-            await asyncio.sleep(10)#task runs every 60 seconds
+            currentMinute = int(strftime("%M",gmtime()))
+            bossNames=[]
+            bossesSpawnInfo=[]
+            content=""
+            try:
+                for boss,bossInfo in fileContent.items():     
+                    bossSpawningInFive = (currentMinute + 5) == bossInfo['Spawn Time']
+                    bossSpawningInThree = (currentMinute + 3) == bossInfo['Spawn Time']
+                    """Checks if boss is spawning in 5 minutes"""
+                    if(bossSpawningInFive):
+                        bossNames.append(boss)
+                        bossesSpawnInfo.append(bossInfo)                        
+                    # elif(bossSpawningInThree):
+                content = self.formatJSON(bossNames,bossesSpawnInfo)               
+            except Exception as e:
+                print(e)
+            if (content != None):
+                await targetChannel.send(content)            
+            else:
+                print("nothing to send")
+            await asyncio.sleep(60)#task runs every 60 seconds
+
+    def formatJSON(self,bossNames,bossInfo):
+        if(len(bossNames) < 1):
+            print("fuck this im out!")
+            return
+        content = "Bosses about to spawn soon: \n"
+        for boss,info in enumerate(bossInfo):
+            content += f'**{bossNames[boss]}** '+"\n"
+            content += "LVL: " + str(info['LVL'])+"\n"
+            content += "Map: "+ info['Map']+"\n"
+            content += "Spawn time: " + str(info['Spawn Time'])+"\n"
+            content += "\n"                        
+        print(content)  
+        return content  
+
+ms2bot = MS2Bot()
+ms2bot.run(ms2bot.token)

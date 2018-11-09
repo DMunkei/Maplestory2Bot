@@ -3,96 +3,96 @@
     "Furios Baphomet":{
         "LVL":40,
         "Map":"Mirror Castle",
-        "Spawn Time":"05"
+        "Spawn Time":5
         },
     "Doondun":{
         "LVL":15,
         "Map":"Kerning Junkyard",
-        "Spawn Time":"05"
+        "Spawn Time":5
     },
     "Ikar Morde":{
         "LVL":50,
         "Map":"Frozencrest",
-        "Spawn Time":"05"
+        "Spawn Time":5
     },
     "Lo and Moomoo":{
         "LVL":15,
         "Map":"Kerning Junkyard",
-        "Spawn Time":"05"
+        "Spawn Time":5
     },
     "Acreon":{
         "LVL":50,
         "Map":"Lavender Island",
-        "Spawn Time":"05"
+        "Spawn Time":5
     },
     "Heartless Baphomet":{
         "LVL":50,
         "Map":"Frostpeak Mountain",
-        "Spawn Time":"15"
+        "Spawn Time":15
     },
     "Ureus":{
         "LVL":50,
         "Map":"Nazkar Pyramid",
-        "Spawn Time":"15"
+        "Spawn Time":15
     },
     "Griffin":{
         "LVL":23,
         "Map":"Frostheart",
-        "Spawn Time":"15"
+        "Spawn Time":15
     },
     "Griffina":{
         "LVL":30,
         "Map":"Trinian Crossing",
-        "Spawn Time":"25"
+        "Spawn Time":25
     },
     "Toh and Googoo":{
         "LVL":43,
         "Map":"Whistler Cliffs",
-        "Spawn Time":"25"
+        "Spawn Time":25
     },
     "Giant Turtle":{
         "LVL":18,
         "Map":"Beachway 111",
-        "Spawn Time":"35"
+        "Spawn Time":35
     },
     "Vayar Gatekeeper":{
         "LVL":35,
         "Map":"Precipice Fortress",
-        "Spawn Time":"35"
+        "Spawn Time":35
     },
     "Alpha Turtle":{
         "LVL":37,
         "Map":"Ellua Riverside",
-        "Spawn Time":"40"
+        "Spawn Time":40
     },
     "Lernos":{
         "LVL":40,
         "Map":"Twilight Moon Castle",
-        "Spawn Time":"40"
+        "Spawn Time":40
     },
     "MK 52 Alpha":{
         "LVL":27,
         "Map":"Neuron DNA Research Center",
-        "Spawn Time":"45"
+        "Spawn Time":45
     },
     "Devilin Warrior":{
         "LVL":21,
         "Map":"South Royal Road",
-        "Spawn Time":"55"
+        "Spawn Time":55
     },
     "Amadon":{
         "LVL":50,
         "Map":"Ludari Arena",
-        "Spawn Time":"55"
+        "Spawn Time":55
     },
     "Devilin Chief (after Devilin Warrior dies)":{
         "LVL":24,
         "Map":"South Royal Road",
-        "Spawn Time":"55"
+        "Spawn Time":55
     },
     "Pekanos":{
         "LVL":47,
         "Map":"Fractured Canyon",
-        "Spawn Time":"55"
+        "Spawn Time":55
     }  
 }
