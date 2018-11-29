@@ -1,4 +1,5 @@
 import discord
+import random
 from time import gmtime, strftime
 import config#storing out token in here
 import json
@@ -24,16 +25,19 @@ class MS2Bot(discord.Client):
         # print(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
     
     async def on_message(self,message):        
-
         print(f'{message.channel} | {message.author} | {message.author.id} | {message.author.name} | {message.content} | {message.channel.id} | {message.channel}')
         if message.content.startswith('!omak'):
             await message.channel.send('Omak 7elwa ya saif.')
         if message.content.startswith('!whostheleader'):
             await message.channel.send('Omak')
         if(self._parseString(message.content,"soofa")):
-            await message.channel.send("Why do you mention my name?")
+            await message.channel.send(self.randomReply())
         if message.content.startswith('!guides'):
             await message.channel.send("Check out the guide channel.")
+        if message.content.startswith('!google'):
+            await message.channel.send(self.googleSearch(message.content))
+        if message.content.startswith('!cl'):
+            await message.channel.send(self.commandList())
                 
     def _parseString(self,message,target):
         """Parses the discord message and checks if soofa was mentioned"""
@@ -66,21 +70,21 @@ class MS2Bot(discord.Client):
                     if(bossSpawningInFive):
                         bossNames.append(boss)
                         bossesSpawnInfo.append(bossInfo)                        
-                    # elif(bossSpawningInThree):
                 content = self.formatJSON(bossNames,bossesSpawnInfo)               
             except Exception as e:
                 print(e)
             if (content != None):
                 await targetChannel.send(content)            
-            else:
-                print("nothing to send")
+            # else:
+            #     print("nothing to send")
             await asyncio.sleep(60)#task runs every 60 seconds
 
     def formatJSON(self,bossNames,bossInfo):
+        """Formats the JSON file so that it can be posted in the guild channel"""
         if(len(bossNames) < 1):
-            print("fuck this im out!")
+            # print("fuck this im out!")
             return
-        content = "Bosses about to spawn soon: \n"
+        content = "Bosses spawning in 5 minutes: \n"
         for boss,info in enumerate(bossInfo):
             content += f'**{bossNames[boss]}** '+"\n"
             content += "LVL: " + str(info['LVL'])+"\n"
@@ -89,6 +93,38 @@ class MS2Bot(discord.Client):
             content += "\n"                        
         print(content)  
         return content  
+
+    def googleSearch(self,searchWord):
+        query = searchWord.split(" ")
+        query.pop(0)
+        filteredWords = ('porn','anal')
+        for word in query:
+            for bannedWord in filteredWords:
+                if word == bannedWord:
+                    return "You naughty boy. You can't google that!"
+        finalQuery = ""
+        if(len(query)>1):
+            for wordCount,word in enumerate(query):
+                if wordCount == 0:                
+                    finalQuery += f'{word}'
+                else:
+                    finalQuery += f'+{word}'
+        else:
+            finalQuery = query[0]
+        googleQuery = f"Here you go. https://www.google.com/search?q={finalQuery}"
+        return googleQuery
+    def randomReply(self):
+        replies = ["Who dares summon me?!","Yes boss?","Soofa... Soofa!!","A wild soofa appeared!"]           
+        x=random.randint(0,len(replies)-1)     
+        # print(x)
+        # print(replies[x])soofa
+        return replies[x]
+    def commandList(self):
+        return "Command list:\n!google <search word>\n!guide\n!whostheleader\n!omak"
+    
+
+
+
 
 ms2bot = MS2Bot()
 ms2bot.run(ms2bot.token)
