@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+from bs4 import Beautifulsoup
 import urllib.request
 
 class Scrapper:
