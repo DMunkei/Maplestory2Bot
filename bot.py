@@ -8,8 +8,9 @@ import Scrapper
 from pathlib import Path
 
 
-bossSpawnerJson = Path(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
-ms2NewsJSON = Path(Path.cwd()/"Maplestory2Bot"/"maplestory2-news.json")
+
+bossSpawnerJson = Path(Path.cwd()/"boss-timer.json")
+ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json")
 
 
 
@@ -58,6 +59,7 @@ class MS2Bot(discord.Client):
     async def _postNewNewsArticle(self):
         """Writes into the updates channel once a new news article is posted."""        
         scrapper = Scrapper()
+        print(type(scrapper))
         await self.wait_until_ready()        
 
         #Setting the channel that will get posted into 
@@ -65,13 +67,16 @@ class MS2Bot(discord.Client):
         fileContent =""
         try:
             with open(ms2NewsJSON) as file:
-                fileContent = json.load(file)            
-            if fileContent['href'] == "":
+                fileContent = json.load(file)
+            if fileContent['URL'] == "":
                 #Add a news article if nothing was given
-                fileContent['href'] = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+                latestArticle = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+                print(latestArticle)
+                fileContent['URL'] = latestArticle
                 #TODO Add a function that gets the published date to Scrapper.
         except Exception as e:
             print(e)
+
         
 
 

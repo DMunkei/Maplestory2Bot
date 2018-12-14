@@ -1,4 +1,4 @@
-from bs4 import Beautifulsoup
+from bs4 import BeautifulSoup
 import urllib.request
 
 class Scrapper:
@@ -14,7 +14,7 @@ class Scrapper:
         def GetWebsite(self, targetURL):
                 self.url = targetURL
                 self.httpResponse = urllib.request.Request(self.url,data=None,headers={"User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36"})
+                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"})
                 self.websiteContent=urllib.request.urlopen(self.httpResponse)           
         #Creates the HTML Document Tree, so we can parse it
         def CreateSoup(self):
@@ -38,7 +38,7 @@ class Scrapper:
             """Calls the URL and the creates a soup object"""
             self.GetWebsite(newsURL)
             self.CreateSoup()
-            return self.GetLatestNewsArticle()
+            return self.GetLatestNewsArticleURL()
 
         def GetLatestNewsArticleURL(self):
             """Gets the newest post article """
@@ -47,6 +47,6 @@ class Scrapper:
 
 
 
-scrap = Scrapper()
+#scrap = Scrapper()
 
-scrap.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+#scrap.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
