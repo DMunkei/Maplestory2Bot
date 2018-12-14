@@ -4,9 +4,13 @@ from time import gmtime, strftime
 import config#storing out token in here
 import json
 import asyncio
+import Scrapper
 from pathlib import Path
 
-jsonFilePath = Path(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
+
+bossSpawnerJson = Path(Path.cwd()/"Maplestory2Bot"/"boss-timer.json")
+ms2NewsJSON = Path(Path.cwd()/"Maplestory2Bot"/"maplestory2-news.json")
+
 
 
 class MS2Bot(discord.Client):
@@ -15,9 +19,13 @@ class MS2Bot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.token = config.TOKEN
-        self.targetChannelID = 509102127105441833
+        self.bossSpawnerChannel = 509102127105441833
+        self.updatesChannel = 519503847291355146
+        self.newsURL = "http://maplestory2.nexon.net/en/news"
+
 
         self.bossSpawnerTask = self.loop.create_task(self._announceBossSpawn())
+        self.newsCheckerTask = self.loop.create_task(self._postNewNewsArticle())
     
     
     async def on_ready(self):
@@ -38,6 +46,8 @@ class MS2Bot(discord.Client):
             await message.channel.send(self.googleSearch(message.content))
         if message.content.startswith('!cl'):
             await message.channel.send(self.commandList())
+        if message.content.startswith('!test'):
+            await self._postNewNewsArticle()
                 
     def _parseString(self,message,target):
         """Parses the discord message and checks if soofa was mentioned"""
@@ -45,14 +55,37 @@ class MS2Bot(discord.Client):
             if word.lower() == target:
                 return True
 
+    async def _postNewNewsArticle(self):
+        """Writes into the updates channel once a new news article is posted."""        
+        scrapper = Scrapper()
+        await self.wait_until_ready()        
+
+        #Setting the channel that will get posted into 
+        updateChannel = self.get_channel(self.updatesChannel)
+        fileContent =""
+        try:
+            with open(ms2NewsJSON) as file:
+                fileContent = json.load(file)            
+            if fileContent['href'] == "":
+                #Add a news article if nothing was given
+                fileContent['href'] = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+                #TODO Add a function that gets the published date to Scrapper.
+        except Exception as e:
+            print(e)
+        
+
+
+
+
+
     async def _announceBossSpawn(self):
         """Background task that is always on and writes in the channel when a boss is about to spawn """
         await self.wait_until_ready()        
 
-        targetChannel = self.get_channel(self.targetChannelID)        
+        targetChannel = self.get_channel(self.bossSpawnerChannel)        
         fileContent=""        
         try:
-            with open(jsonFilePath) as file:
+            with open(bossSpawnerJson) as file:
                 fileContent = json.load(file)
         except Exception as e:
             print(e)
@@ -74,9 +107,7 @@ class MS2Bot(discord.Client):
             except Exception as e:
                 print(e)
             if (content != None):
-                await targetChannel.send(content)            
-            # else:
-            #     print("nothing to send")
+                await targetChannel.send(content)                        
             await asyncio.sleep(60)#task runs every 60 seconds
 
     def formatJSON(self,bossNames,bossInfo):
@@ -93,7 +124,6 @@ class MS2Bot(discord.Client):
             content += "\n"                        
         print(content)  
         return content  
-
     def googleSearch(self,searchWord):
         query = searchWord.split(" ")
         query.pop(0)
@@ -115,10 +145,10 @@ class MS2Bot(discord.Client):
         return googleQuery
     def randomReply(self):
         replies = ["Who dares summon me?!","Yes boss?","Soofa... Soofa!!","A wild soofa appeared!"]           
-        x=random.randint(0,len(replies)-1)     
-        # print(x)
-        # print(replies[x])soofa
-        return replies[x]
+        reply=random.randint(0,len(replies)-1)     
+        # print(reply)
+        # print(replies[reply])soofa
+        return replies[reply]
     def commandList(self):
         return "Command list:\n!google <search word>\n!guide\n!whostheleader\n!omak"
     
