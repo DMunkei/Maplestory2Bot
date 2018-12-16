@@ -58,8 +58,7 @@ class MS2Bot(discord.Client):
 
     async def _postNewNewsArticle(self):
         """Writes into the updates channel once a new news article is posted."""        
-        scrapper = Scrapper()
-        print(type(scrapper))
+        scrapper = Scrapper.Scrapper()
         await self.wait_until_ready()        
 
         #Setting the channel that will get posted into 
@@ -73,6 +72,7 @@ class MS2Bot(discord.Client):
                 latestArticle = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
                 print(latestArticle)
                 fileContent['URL'] = latestArticle
+                print(fileContent)
                 #TODO Add a function that gets the published date to Scrapper.
         except Exception as e:
             print(e)
