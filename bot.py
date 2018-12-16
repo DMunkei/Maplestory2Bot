@@ -17,6 +17,7 @@ ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json")
 class MS2Bot(discord.Client):
     """Maplestory2 discord bot"""    
     targetChannel = ""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.token = config.TOKEN
@@ -63,25 +64,29 @@ class MS2Bot(discord.Client):
 
         #Setting the channel that will get posted into 
         updateChannel = self.get_channel(self.updatesChannel)
-        fileContent =""
-        try:
-            with open(ms2NewsJSON) as file:
-                fileContent = json.load(file)
-            if fileContent['URL'] == "":
-                #Add a news article if nothing was given
-                latestArticle = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
-                print(latestArticle)
-                fileContent['URL'] = latestArticle
-                print(fileContent)
-                #TODO Add a function that gets the published date to Scrapper.
-        except Exception as e:
-            print(e)
 
-        
-
-
-
-
+        while not self.is_closed():
+            try:
+                with open(ms2NewsJSON) as file:
+                    fileContent = json.load(file)
+                    latestArticle = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+                    fileContent['URL'] = latestArticle
+                    latestArticleDate = scrapper.GetNewsArticleDate()
+                    fileContent['publishedOn'] = latestArticleDate
+                if fileContent['URL'] == "":
+                    #Add a news article if nothing was given
+                    with open(ms2NewsJSON, "w") as write_file:
+                        json.dump(fileContent, write_file, indent=4)
+                elif fileContent['URL'] != scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news"):
+                    #if the latest news article is not already in json
+                    fileContent['URL'] = latestArticle
+                    fileContent['publishedOn'] = latestArticleDate
+                    with open(ms2NewsJSON, "w") as write_file:
+                        json.dump(fileContent, write_file, indent=4)
+                        await updateChannel.send("http://maplestory2.nexon.net" + latestArticle)
+            except Exception as e:
+                print(e)
+        await asyncio.sleep(360)  # task runs every 60 seconds
 
     async def _announceBossSpawn(self):
         """Background task that is always on and writes in the channel when a boss is about to spawn """
@@ -128,7 +133,8 @@ class MS2Bot(discord.Client):
             content += "Spawn time: " + str(info['Spawn Time'])+"\n"
             content += "\n"                        
         print(content)  
-        return content  
+        return content
+
     def googleSearch(self,searchWord):
         query = searchWord.split(" ")
         query.pop(0)
@@ -148,12 +154,14 @@ class MS2Bot(discord.Client):
             finalQuery = query[0]
         googleQuery = f"Here you go. https://www.google.com/search?q={finalQuery}"
         return googleQuery
+
     def randomReply(self):
         replies = ["Who dares summon me?!","Yes boss?","Soofa... Soofa!!","A wild soofa appeared!"]           
         reply=random.randint(0,len(replies)-1)     
         # print(reply)
         # print(replies[reply])soofa
         return replies[reply]
+
     def commandList(self):
         return "Command list:\n!google <search word>\n!guide\n!whostheleader\n!omak"
     

@@ -19,6 +19,7 @@ class Scrapper:
         #Creates the HTML Document Tree, so we can parse it
         def CreateSoup(self):
                 self.soup = BeautifulSoup(self.websiteContent.read(), "html.parser")
+
         
         #Formats the DOM
         def PrettifyDOMTree(self):
@@ -44,6 +45,17 @@ class Scrapper:
             """Gets the newest post article """
             article = self.soup.find("a",class_="news-item-link")
             return article.get('href')
+
+        def GetNewsArticleDate(self,):
+            """Gets the date of a news article"""
+            date = str(self.soup.find("time"))
+            x = 6
+            dateformat = ""
+            while date[x] != "<":
+                dateformat = dateformat + date[x]
+                x = x + 1
+            return dateformat
+
 
 
 
