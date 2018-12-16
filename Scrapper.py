@@ -14,7 +14,7 @@ class Scrapper:
         def GetWebsite(self, targetURL):
                 self.url = targetURL
                 self.httpResponse = urllib.request.Request(self.url,data=None,headers={"User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36"})
+                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"})
                 self.websiteContent=urllib.request.urlopen(self.httpResponse)           
         #Creates the HTML Document Tree, so we can parse it
         def CreateSoup(self):
