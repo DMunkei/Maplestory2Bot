@@ -48,8 +48,8 @@ class MS2Bot(discord.Client):
             await message.channel.send(self.googleSearch(message.content))
         if message.content.startswith('!cl'):
             await message.channel.send(self.commandList())
-        if message.content.startswith('!test'):
-            await self._postNewNewsArticle()
+        if message.content.startswith('!boss'):
+            await message.channel.send("Marco and Doma are boss!")
                 
     def _parseString(self,message,target):
         """Parses the discord message and checks if soofa was mentioned"""
@@ -86,7 +86,7 @@ class MS2Bot(discord.Client):
                         await updateChannel.send("http://maplestory2.nexon.net" + latestArticle)
             except Exception as e:
                 print(e)
-        await asyncio.sleep(3600)  # task runs every 60 seconds
+            await asyncio.sleep(3600)  # task runs every 60 seconds
 
     async def _announceBossSpawn(self):
         """Background task that is always on and writes in the channel when a boss is about to spawn """

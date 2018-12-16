@@ -3,5 +3,4 @@ Maplestory2Bot/config.py
 bot/*
 config.py
 venv/*
-.idea/inspectionProfiles/Project_Default.xml
-.idea/misc.xml
+.idea/*
