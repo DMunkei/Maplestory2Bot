@@ -7,12 +7,8 @@ import asyncio
 import Scrapper
 from pathlib import Path
 
-
-
 bossSpawnerJson = Path(Path.cwd()/"boss-timer.json")
 ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json")
-
-
 
 class MS2Bot(discord.Client):
     """Maplestory2 discord bot"""    
@@ -24,7 +20,6 @@ class MS2Bot(discord.Client):
         self.bossSpawnerChannel = 509102127105441833
         self.updatesChannel = 519503847291355146
         self.newsURL = "http://maplestory2.nexon.net/en/news"
-
 
         self.bossSpawnerTask = self.loop.create_task(self._announceBossSpawn())
         self.newsCheckerTask = self.loop.create_task(self._postNewNewsArticle())
@@ -69,7 +64,7 @@ class MS2Bot(discord.Client):
             try:
                 with open(ms2NewsJSON) as file:
                     fileContent = json.load(file)
-                    latestArticle = scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news")
+                    latestArticle = scrapper.CheckCurrentNewsArticle(self.newsURL)
                     fileContent['URL'] = latestArticle
                     latestArticleDate = scrapper.GetNewsArticleDate()
                     fileContent['publishedOn'] = latestArticleDate
@@ -77,13 +72,13 @@ class MS2Bot(discord.Client):
                     #Add a news article if nothing was given
                     with open(ms2NewsJSON, "w") as write_file:
                         json.dump(fileContent, write_file, indent=4)
+                #if the latest news article is not already in json
                 elif fileContent['URL'] != latestArticle:
-                    #if the latest news article is not already in json
                     fileContent['URL'] = latestArticle
                     fileContent['publishedOn'] = latestArticleDate
                     with open(ms2NewsJSON, "w") as write_file:
                         json.dump(fileContent, write_file, indent=4)
-                        await updateChannel.send("http://maplestory2.nexon.net" + latestArticle)
+                        await updateChannel.send(self.newsURL + latestArticle)
             except Exception as e:
                 print(e)
         await asyncio.sleep(3600)  # task runs every 60 seconds
@@ -158,15 +153,11 @@ class MS2Bot(discord.Client):
     def randomReply(self):
         replies = ["Who dares summon me?!","Yes boss?","Soofa... Soofa!!","A wild soofa appeared!"]           
         reply=random.randint(0,len(replies)-1)     
-        # print(reply)
-        # print(replies[reply])soofa
         return replies[reply]
 
     def commandList(self):
         return "Command list:\n!google <search word>\n!guide\n!whostheleader\n!omak"
     
-
-
 
 
 ms2bot = MS2Bot()
