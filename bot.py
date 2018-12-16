@@ -19,9 +19,9 @@ class MS2Bot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.token = config.TOKEN
-        self.bossSpawnerChannel = 509102127105441833
-        self.updatesChannel = 519503847291355146
-        self.newsURL = "http://maplestory2.nexon.net/en/news"
+        self.bossSpawnerChannel = config.bossSpawnerChannel
+        self.updatesChannel = config.updatesChannel
+        self.newsURL = config.newsURL
 
         self.bossSpawnerTask = self.loop.create_task(self._announceBossSpawn())
         self.newsCheckerTask = self.loop.create_task(self._postNewNewsArticle())
