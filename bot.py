@@ -49,7 +49,7 @@ class MS2Bot(discord.Client):
         if message.content.startswith('!cl'):
             await message.channel.send(self.commandList())
         if message.content.startswith('!boss'):
-            await message.channel.send("Marco is boss!")
+            await message.channel.send("Marco and Doma are boss!")
                 
     def _parseString(self,message,target):
         """Parses the discord message and checks if soofa was mentioned"""
