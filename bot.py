@@ -7,8 +7,10 @@ import asyncio
 import Scrapper
 from pathlib import Path
 
-bossSpawnerJson = Path(Path.cwd()/"boss-timer.json")
-ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json")
+# bossSpawnerJson = Path(Path.cwd()/"boss-timer.json") This path is to be used when testing locally
+#ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json") This path is to be used when testing locally
+bossSpawnerJson = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"boss-timer.json") #path for server
+ms2NewsJSON = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"maplestory2-news.json")
 
 class MS2Bot(discord.Client):
     """Maplestory2 discord bot"""    
