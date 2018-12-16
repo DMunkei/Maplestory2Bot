@@ -77,7 +77,7 @@ class MS2Bot(discord.Client):
                     #Add a news article if nothing was given
                     with open(ms2NewsJSON, "w") as write_file:
                         json.dump(fileContent, write_file, indent=4)
-                elif fileContent['URL'] != scrapper.CheckCurrentNewsArticle("http://maplestory2.nexon.net/en/news"):
+                elif fileContent['URL'] != latestArticle:
                     #if the latest news article is not already in json
                     fileContent['URL'] = latestArticle
                     fileContent['publishedOn'] = latestArticleDate
