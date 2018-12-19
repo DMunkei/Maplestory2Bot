@@ -7,10 +7,10 @@ import asyncio
 import Scrapper
 from pathlib import Path
 
-# bossSpawnerJson = Path(Path.cwd()/"boss-timer.json") This path is to be used when testing locally
-#ms2NewsJSON = Path(Path.cwd()/"maplestory2-news.json") This path is to be used when testing locally
-bossSpawnerJson = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"boss-timer.json") #path for server
-ms2NewsJSON = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"maplestory2-news.json")
+bossSpawnerJson = Path(Path.cwd()/"Maplestory2Bot"/"boss-timer.json") #This path is to be used when testing locally
+ms2NewsJSON = Path(Path.cwd()/"Maplestory2Bot"/"maplestory2-news.json") #This path is to be used when testing locally
+# bossSpawnerJson = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"boss-timer.json") #path for server
+# ms2NewsJSON = Path(Path.cwd()/"ms2bot"/"Maplestory2Bot"/"maplestory2-news.json")
 
 class MS2Bot(discord.Client):
     """Maplestory2 discord bot"""    
@@ -58,32 +58,53 @@ class MS2Bot(discord.Client):
         """Writes into the updates channel once a new news article is posted."""        
         scrapper = Scrapper.Scrapper()
         await self.wait_until_ready()        
-
         #Setting the channel that will get posted into 
         updateChannel = self.get_channel(self.updatesChannel)
-
+        fileContent=""
         while not self.is_closed():
+            print("Scrapping task started")
             try:
-                with open(ms2NewsJSON) as file:
+                """We don't need to keep opening and closing the file, just open it once and close after all is done"""
+                #Getting the new updates information.
+                latestArticle,latestArticleDate = self._getNewArticleInfo(scrapper)
+                with open(ms2NewsJSON,'r+') as file: # Opening file with the special read and write mode. This way we don't need to keep opening and closing the file.
                     fileContent = json.load(file)
-                    latestArticle = scrapper.CheckCurrentNewsArticle(self.newsURL)
-                    fileContent['URL'] = latestArticle
-                    latestArticleDate = scrapper.GetNewsArticleDate()
-                    fileContent['publishedOn'] = latestArticleDate
-                if fileContent['URL'] == "":
-                    #Add a news article if nothing was given
-                    with open(ms2NewsJSON, "w") as write_file:
-                        json.dump(fileContent, write_file, indent=4)
-                #if the latest news article is not already in json
-                elif fileContent['URL'] != latestArticle:
-                    fileContent['URL'] = latestArticle
-                    fileContent['publishedOn'] = latestArticleDate
-                    with open(ms2NewsJSON, "w") as write_file:
-                        json.dump(fileContent, write_file, indent=4)
-                        await updateChannel.send(self.newsURL + latestArticle)
+                    if fileContent['URL'] == "":
+                        # print(f"Current article: {latestArticle}")
+                        fileContent['URL'] = latestArticle
+                        fileContent['publishedOn'] = latestArticleDate
+                        #Write fileContent inside the JSON file
+                        self._goToFileStart(file)
+                        json.dump(fileContent, file, indent=4)
+                    #if the latest news article is not already in json
+                    elif fileContent['URL'] != latestArticle:
+                        fileContent['URL'] = latestArticle
+                        fileContent['publishedOn'] = latestArticleDate
+                        # print(f"The last article{fileContent['URL']} does not match with {latestArticle}")                    
+                        #Resets the pointer inside the file back to the beginning of the file. Useful when you want to read and write in one operation in a file
+                        self._goToFileStart(file)
+                        #Write fileContent inside the JSON file
+                        json.dump(fileContent, file, indent=4)
+                        print(self.newsURL + latestArticle)
+                    else:
+                        print(f"What the fuck is {fileContent['URL']}")
             except Exception as e:
                 print(e)
+
+            await updateChannel.send(self.newsURL + latestArticle)
             await asyncio.sleep(3600)  # task runs every 60 seconds
+
+    def _goToFileStart(self,file):
+        """Jumps back to the beginning of the opened file"""
+        file.seek(0)
+
+    def _getNewArticleInfo(self,scrapper):
+        """Scraps the Maplestory2 official website and checks for new updates"""
+        latestArticle = scrapper.CheckCurrentNewsArticle(self.newsURL)
+        latestArticleDate = scrapper.GetNewsArticleDate()
+        return latestArticle,latestArticleDate
+
+
 
     async def _announceBossSpawn(self):
         """Background task that is always on and writes in the channel when a boss is about to spawn """
@@ -129,7 +150,7 @@ class MS2Bot(discord.Client):
             content += "Map: "+ info['Map']+"\n"
             content += "Spawn time: " + str(info['Spawn Time'])+"\n"
             content += "\n"                        
-        print(content)  
+        # print(content)  
         return content
 
     def googleSearch(self,searchWord):

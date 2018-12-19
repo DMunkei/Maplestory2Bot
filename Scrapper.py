@@ -37,6 +37,7 @@ class Scrapper:
                                             
         def CheckCurrentNewsArticle(self,newsURL):
             """Calls the URL and the creates a soup object"""
+            newsURL += "en/news"
             self.GetWebsite(newsURL)
             self.CreateSoup()
             return self.GetLatestNewsArticleURL()
@@ -44,7 +45,8 @@ class Scrapper:
         def GetLatestNewsArticleURL(self):
             """Gets the newest post article """
             article = self.soup.find("a",class_="news-item-link")
-            return article.get('href')
+            #Remove the first '/' from the href. This is needed for the final link
+            return article.get('href')[1:]
 
         def GetNewsArticleDate(self,):
             """Gets the date of a news article"""
