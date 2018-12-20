@@ -96,7 +96,7 @@ class MS2Bot(discord.Client):
                 print(e)
             if sendUpdate == True:
                 await updateChannel.send(self.newsURL + latestArticle)
-            await asyncio.sleep(20)  # task runs every 60 seconds
+            await asyncio.sleep(3600)  # task runs every 60 seconds
 
     def _goToFileStart(self,file):
         """Jumps back to the beginning of the opened file"""
