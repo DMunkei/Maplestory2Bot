@@ -60,9 +60,10 @@ class MS2Bot(discord.Client):
         await self.wait_until_ready()        
         #Setting the channel that will get posted into 
         updateChannel = self.get_channel(self.updatesChannel)
-        fileContent=""
+        fileContent=""        
         while not self.is_closed():
             print("Scrapping task started")
+            sendUpdate = False
             try:
                 """We don't need to keep opening and closing the file, just open it once and close after all is done"""
                 #Getting the new updates information.
@@ -70,6 +71,7 @@ class MS2Bot(discord.Client):
                 with open(ms2NewsJSON,'r+') as file: # Opening file with the special read and write mode. This way we don't need to keep opening and closing the file.
                     fileContent = json.load(file)
                     if fileContent['URL'] == "":
+                        sendUpdate = True
                         # print(f"Current article: {latestArticle}")
                         fileContent['URL'] = latestArticle
                         fileContent['publishedOn'] = latestArticleDate
@@ -78,6 +80,7 @@ class MS2Bot(discord.Client):
                         json.dump(fileContent, file, indent=4)
                     #if the latest news article is not already in json
                     elif fileContent['URL'] != latestArticle:
+                        sendUpdate = True
                         fileContent['URL'] = latestArticle
                         fileContent['publishedOn'] = latestArticleDate
                         # print(f"The last article{fileContent['URL']} does not match with {latestArticle}")                    
@@ -87,12 +90,13 @@ class MS2Bot(discord.Client):
                         json.dump(fileContent, file, indent=4)
                         print(self.newsURL + latestArticle)
                     else:
+                        print(sendUpdate)
                         print(f"What the fuck is {fileContent['URL']}")
             except Exception as e:
                 print(e)
-
-            await updateChannel.send(self.newsURL + latestArticle)
-            await asyncio.sleep(3600)  # task runs every 60 seconds
+            if sendUpdate == True:
+                await updateChannel.send(self.newsURL + latestArticle)
+            await asyncio.sleep(20)  # task runs every 60 seconds
 
     def _goToFileStart(self,file):
         """Jumps back to the beginning of the opened file"""
